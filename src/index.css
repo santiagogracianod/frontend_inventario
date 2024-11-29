@@ -1,3 +1,9 @@
+@import 'primereact/resources/themes/saga-blue/theme.css'; /* Tema */
+@import 'primereact/resources/primereact.min.css';         /* Componentes */
+@import 'primeicons/primeicons.css';                      /* Íconos */
+@import 'primeflex/primeflex.css';                        /* Utilidades de flexbox */
+
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
