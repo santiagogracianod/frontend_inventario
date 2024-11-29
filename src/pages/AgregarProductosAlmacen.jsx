@@ -1,10 +1,8 @@
 import { useParams } from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import axios from "../axiosConfig";
 import { InputText } from "primereact/inputtext";
 import { InputNumber } from "primereact/inputnumber";
-import { Calendar } from "primereact/calendar";
-import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 
@@ -14,34 +12,27 @@ function AgregarProductosAlmacen() {
   const [producto, setProducto] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [precio, setPrecio] = useState(null);
-  const [idCategoria, setIdCategoria] = useState(null);
-  const [categorias, setCategorias] = useState([]);
+  const [categoria, setCategoria] = useState(null); // Ahora es un string
   const [cantidad, setCantidad] = useState(null);
-  const [fechaCreacion, setFechaCreacion] = useState(new Date());
-  const [fechaActualizacion, setFechaActualizacion] = useState(new Date());
-
-  // Cargar la lista de categorías desde el backend
-  useEffect(() => {
-    axios
-      .get("/api/categorias") // Endpoint para obtener categorías
-      .then((response) => setCategorias(response.data))
-      .catch((error) => console.error("Error al cargar las categorías:", error));
-  }, []);
 
   // Manejar el envío del formulario
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    // Construir el objeto del producto
+    const productoData = {
+      nombre: producto,
+      descripcion,
+      precio,
+      idCategoria: 5, // Enviar el nombre de la categoría como string
+    };
+
+    console.log(productoData);
+    
+
+    // Hacer la solicitud POST
     axios
-      .post(`/api/inventario/${id}`, {
-        nombre: producto,
-        descripcion,
-        precio,
-        id_categoria: idCategoria,
-        cantidad,
-        fecha_creacion: fechaCreacion.toISOString().split("T")[0], // Convertir a formato YYYY-MM-DD
-        fecha_actualizacion: fechaActualizacion.toISOString().split("T")[0],
-      })
+      .post(`/api/almacen/${id}/${cantidad}`, productoData) // cantidad e id en la URL
       .then(() => {
         toast.current.show({
           severity: "success",
@@ -49,13 +40,13 @@ function AgregarProductosAlmacen() {
           detail: "Producto agregado exitosamente",
           life: 3000,
         });
+
+        // Limpiar campos del formulario
         setProducto("");
         setDescripcion("");
         setPrecio(null);
-        setIdCategoria(null);
+        setCategoria("");
         setCantidad(null);
-        setFechaCreacion(new Date());
-        setFechaActualizacion(new Date());
       })
       .catch((error) => {
         console.error("Error al agregar el producto:", error);
@@ -105,14 +96,11 @@ function AgregarProductosAlmacen() {
         </div>
         <div className="field">
           <label htmlFor="categoria">Categoría</label>
-          <Dropdown
+          <InputText
             id="categoria"
-            value={idCategoria}
-            options={categorias}
-            onChange={(e) => setIdCategoria(e.value)}
-            optionLabel="nombre"
-            placeholder="Seleccione una categoría"
-            className="mb-3"
+            value={categoria}
+            onChange={(e) => setCategoria(e.target.value)} // Permitir entrada como texto
+            required
           />
         </div>
         <div className="field">
@@ -123,28 +111,6 @@ function AgregarProductosAlmacen() {
             onValueChange={(e) => setCantidad(e.value)}
             required
             min={0}
-          />
-        </div>
-        <div className="field">
-          <label htmlFor="fechaCreacion">Fecha de Creación</label>
-          <Calendar
-            id="fechaCreacion"
-            value={fechaCreacion}
-            onChange={(e) => setFechaCreacion(e.value)}
-            dateFormat="yy-mm-dd"
-            showIcon
-            required
-          />
-        </div>
-        <div className="field">
-          <label htmlFor="fechaActualizacion">Fecha de Actualización</label>
-          <Calendar
-            id="fechaActualizacion"
-            value={fechaActualizacion}
-            onChange={(e) => setFechaActualizacion(e.value)}
-            dateFormat="yy-mm-dd"
-            showIcon
-            required
           />
         </div>
         <Button type="submit" label="Agregar Producto" icon="pi pi-check" />

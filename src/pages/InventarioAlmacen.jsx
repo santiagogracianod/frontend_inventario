@@ -13,7 +13,7 @@ function InventarioAlmacen() {
   useEffect(() => {
     setLoading(true);
     axios
-      .get(`/api/inventario/${id}`) // Llama al backend
+      .get(`/api/almacen/${id}`) // Llama al backend
       .then((response) => {
         setInventario(response.data);
         setLoading(false);
@@ -35,6 +35,7 @@ function InventarioAlmacen() {
       >
         <Column field="nombre" header="Producto"></Column>
         <Column field="descripcion" header="Descripción"></Column>
+        <Column field="precio" header="Precio"></Column>
         <Column field="cantidad" header="Cantidad"></Column>
       </DataTable>
       <Button
